@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management Dashboard</title>
+    <!-- Tailwind CSS for modern layout & styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        libraryPurple: '#8b5cf6',
+                        libraryDarkPurple: '#6d28d9',
+                        libraryBg: '#f3f4f6',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+
+    <!-- Top Navigation -->
+    <header class="bg-gradient-to-r from-purple-800 to-indigo-900 text-white shadow-md">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-graduation-cap text-2xl text-purple-300"></i>
+                <h1 class="text-xl font-bold tracking-wide">Library Workspace Manager</h1>
+            </div>
+            <div class="text-sm bg-purple-700 bg-opacity-50 px-3 py-1 rounded-full border border-purple-400">
+                <i class="fa-solid fa-calendar-days mr-1"></i> <span id="current-date"></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 max-w-7xl">
+        
+        <!-- Summary Analytics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <!-- Total Users -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-600 flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Total Active Users</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="stat-total-users">0</h3>
+                </div>
+                <div class="bg-purple-100 p-3 rounded-full text-purple-600">
+                    <i class="fa-solid fa-users text-2xl"></i>
+                </div>
+            </div>
+
+            <!-- Total Revenue -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500 flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Total Collection</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="stat-total-revenue">₹0</h3>
+                </div>
+                <div class="bg-green-100 p-3 rounded-full text-green-600">
+                    <i class="fa-solid fa-indian-rupee-sign text-2xl"></i>
+                </div>
+            </div>
+
+            <!-- Current Active Shift -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500 flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Full Day Members</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="stat-full-shift">0</h3>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-full text-blue-600">
+                    <i class="fa-solid fa-clock text-2xl"></i>
+                </div>
+            </div>
+
+            <!-- Pending Dues -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-orange-500 flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Pending Status Count</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="stat-pending-payments">0</h3>
+                </div>
+                <div class="bg-orange-100 p-3 rounded-full text-orange-600">
+                    <i class="fa-solid fa-hourglass-half text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Workspace Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Hand side Forms -->
+            <div class="lg:col-span-1 space-y-8">
+                <!-- Add User & Payment Entry Form -->
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-user-plus mr-2 text-purple-600"></i> New Registration / Payment
+                    </h2>
+                    <form id="library-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">User Full Name</label>
+                            <input type="text" id="user-name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Rahul Sharma">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Shift Selection</label>
+                                <select id="user-shift" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    <option value="Morning">Morning (6 AM - 10 AM)</option>
+                                    <option value="Afternoon">Afternoon (10 AM - 2 PM)</option>
+                                    <option value="Evening">Evening (2 PM - 6 PM)</option>
+                                    <option value="Night">Night (6 PM - 10 PM)</option>
+                                    <option value="Full Day">Full Day (16 Hours)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Seat / Desk No.</label>
+                                <input type="text" id="user-seat" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. A-12">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Amount (INR)</label>
+                                <input type="number" id="pay-amount" required min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. 500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Payment Status</label>
+                                <select id="pay-status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    <option value="Paid">Paid</option>
+                                    <option value="Pending">Pending</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Payment Method</label>
+                            <select id="pay-method" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="UPI / QR">UPI / QR Code</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Bank Transfer">Net Banking</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-2.5 px-4 rounded-lg shadow hover:opacity-90 transition duration-200 mt-2">
+                            Add Entry to Records
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Shift Metrics Table breakdown -->
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-chart-pie mr-2 text-purple-600"></i> Shift Occupancy Breakdown
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-600"><i class="fa-solid fa-sun mr-2 text-amber-500"></i>Morning Shift</span>
+                            <span class="font-bold text-gray-800 bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full text-xs" id="count-morning">0 Users</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-600"><i class="fa-solid fa-cloud-sun mr-2 text-orange-400"></i>Afternoon Shift</span>
+                            <span class="font-bold text-gray-800 bg-orange-100 text-orange-800 px-2.5 py-0.5 rounded-full text-xs" id="count-afternoon">0 Users</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-600"><i class="fa-solid fa-moon mr-2 text-indigo-500"></i>Evening Shift</span>
+                            <span class="font-bold text-gray-800 bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded-full text-xs" id="count-evening">0 Users</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-600"><i class="fa-solid fa-bolt mr-2 text-purple-500"></i>Full Day Space</span>
+                            <span class="font-bold text-gray-800 bg-purple-100 text-purple-800 px-2.5 py-0.5 rounded-full text-xs" id="count-fullday">0 Users</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Hand Side Data Logs Grid -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                        <h2 class="text-lg font-bold text-gray-800 flex items-center">
+                            <i class="fa-solid fa-address-book mr-2 text-purple-600"></i> Active Library Records Ledger
+                        </h2>
+                        <button onclick="clearAllData()" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 font-medium py-1 px-2.5 rounded-lg border border-red-200 transition">
+                            Clear All Records
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider border-b border-gray-200">
+                                    <th class="py-3 px-6">User / Seat</th>
+                                    <th class="py-3 px-6">Assigned Shift</th>
+                                    <th class="py-3 px-6">Payment Mode</th>
+                                    <th class="py-3 px-6">Fee Amount</th>
+                                    <th class="py-3 px-6">Status</th>
+                                    <th class="py-3 px-6 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ledger-table-body" class="divide-y divide-gray-100 text-sm">
+                                <!-- Dynamic dynamic rows injected via JS -->
+                            </tbody>
+                        </table>
+                        <div id="empty-state" class="text-center py-12 text-gray-400 hidden">
+                            <i class="fa-solid fa-folder-open text-4xl mb-2 block"></i>
+                            No active entries logged yet. Add your first library member using the sidebar form!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="mt-16 border-t border-gray-200 bg-white py-6 text-center text-xs text-gray-500">
+        <p>&copy; 2026 Library Desk Workspace Manager Dashboard. Designed for your premium study hall environment.</p>
+    </footer>
+
+    <!-- Application Scripting Interface Logic -->
+    <script>
+        // Set dynamic modern Header Date
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-IN', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        // Initialize App Data Storage Cache state
+        let libraryRecords = JSON.parse(localStorage.getItem('libraryRecords')) || [];
+
+        // Catch form elements
+        const libraryForm = document.getElementById('library-form');
+        const tableBody = document.getElementById('ledger-table-body');
+        const emptyState = document.getElementById('empty-state');
+
+        // Main app rendering pipeline
+        function updateDashboard() {
+            // Save state to local browser engine
+            localStorage.setItem('libraryRecords', JSON.stringify(libraryRecords));
+
+            // Clean previous rows
+            tableBody.innerHTML = '';
+
+            if (libraryRecords.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                
+                libraryRecords.forEach((record, index) => {
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-gray-50 transition duration-150";
+                    
+                    const statusClass = record.status === 'Paid' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-orange-100 text-orange-800';
+
+                    row.innerHTML = `
+                        <td class="py-4 px-6">
+                            <div class="font-semibold text-gray-800">${escapeHtml(record.name)}</div>
+                            <div class="text-xs text-gray-400 flex items-center mt-0.5">
+                                <i class="fa-solid fa-chair mr-1"></i> Seat: ${record.seat ? escapeHtml(record.seat) : 'N/A'}
+                            </div>
+                        </td>
+                        <td class="py-4 px-6 text-gray-600 font-medium">${record.shift}</td>
+                        <td class="py-4 px-6 text-gray-500 text-xs">${record.method}</td>
+                        <td class="py-4 px-6 font-bold text-gray-700">₹${parseInt(record.amount).toLocaleString('en-IN')}</td>
+                        <td class="py-4 px-6">
+                            <span class="px-2.5 py-1 text-xs font-bold rounded-full ${statusClass}">${record.status}</span>
+                        </td>
+                        <td class="py-4 px-6 text-center">
+                            <button onclick="deleteRecord(${index})" class="text-red-500 hover:text-red-700 p-1 transition" title="Delete Log">
+                                <i class="fa-regular fa-trash-can text-lg"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            calculateMetrics();
+        }
+
+        // Functional computation of aggregations
+        function calculateMetrics() {
+            const totalUsers = libraryRecords.length;
+            
+            const totalRevenue = libraryRecords
+                .filter(r => r.status === 'Paid')
+                .reduce((sum, r) => sum + parseInt(r.amount || 0), 0);
+
+            const pendingCount = libraryRecords.filter(r => r.status === 'Pending').length;
+            
+            // Shift filters
+            const morningCount = libraryRecords.filter(r => r.shift === 'Morning').length;
+            const afternoonCount = libraryRecords.filter(r => r.shift === 'Afternoon').length;
+            const eveningCount = libraryRecords.filter(r => r.shift === 'Evening').length;
+            const eveningCount = libraryRecords.filter(r => r.shift === 'Night').length;
+            const fullDayCount = libraryRecords.filter(r => r.shift === 'Full Day').length;
+
+            // Update DOM metrics elements
+            document.getElementById('stat-total-users').innerText = totalUsers;
+            document.getElementById('stat-total-revenue').innerText = '₹' + totalRevenue.toLocaleString('en-IN');
+            document.getElementById('stat-full-shift').innerText = fullDayCount;
+            document.getElementById('stat-pending-payments').innerText = pendingCount;
+
+            // Update shift lists breakdown UI
+            document.getElementById('count-morning').innerText = `${morningCount} User${morningCount !== 1 ? 's' : ''}`;
+            document.getElementById('count-afternoon').innerText = `${afternoonCount} User${afternoonCount !== 1 ? 's' : ''}`;
+            document.getElementById('count-evening').innerText = `${eveningCount} User${eveningCount !== 1 ? 's' : ''}`;
+            document.getElementById('count-night').innerText = `${nightCount} User${nightCount !== 1 ? 's' : ''}`;
+            document.getElementById('count-fullday').innerText = `${fullDayCount} User${fullDayCount !== 1 ? 's' : ''}`;
+        }
+
+        // Submission form Interceptor
+        libraryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const newRecord = {
+                name: document.getElementById('user-name').value.trim(),
+                shift: document.getElementById('user-shift').value,
+                seat: document.getElementById('user-seat').value.trim(),
+                amount: document.getElementById('pay-amount').value,
+                status: document.getElementById('pay-status').value,
+                method: document.getElementById('pay-method').value
+            };
+
+            libraryRecords.push(newRecord);
+            updateDashboard();
+            
+            // Clear inputs dynamically
+            libraryForm.reset();
+        });
+
+        // Delete Row Operation
+        function deleteRecord(index) {
+            if(confirm("Are you sure you want to remove this ledger record item?")) {
+                libraryRecords.splice(index, 1);
+                updateDashboard();
+            }
+        }
+
+        // Purge memory function
+        function clearAllData() {
+            if(confirm("CRITICAL WARNING: Are you sure you want to delete all historical logs? This cannot be undone.")) {
+                libraryRecords = [];
+                updateDashboard();
+            }
+        }
+
+        // Helper string encoder to prevent injection vectors
+        function escapeHtml(string) {
+            return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // Initial launch configuration trigger
+        updateDashboard();
+    </script>
+</body>
+</html>
